@@ -1,0 +1,10 @@
+# Input method control scripts collection
+
+Directory   | Description
+------------|----------------------------
+ibus-python | iBus by Python
+uimfep-vim  | uim-fep by pure Vim script
+
+# LICENSE
+
+All scripts are destributed under one of the Vim, MIT or BSD licenses.
