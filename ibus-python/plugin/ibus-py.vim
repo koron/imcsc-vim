@@ -20,29 +20,73 @@ if !s:is_enable()
   finish
 end
 
-let s:PYPATH = expand('<sfile>:p:r').'.py'
-
 if has('python3')
-  execute 'py3file '.s:PYPATH
-  function! PyIbusGet()
+python3 << EOF
+from gi.repository import IBus
+class IBusPy:
+    BUS = IBus.Bus()
+    IC = IBus.InputContext.get_input_context(
+            BUS.current_input_context(),
+            BUS.get_connection())
+    @staticmethod
+    def ic():
+        return IBusPy.IC
+    @staticmethod
+    def get():
+        if IBusPy.ic().is_enabled():
+            return 1
+        else:
+            return 0
+    @staticmethod
+    def set(v):
+        if v:
+            IBusPy.ic().enable()
+        else:
+            IBusPy.ic().disable()
+        return 0
+EOF
+  function! IBusPyGet()
     return py3eval('IBusPy.get()')
   endfunction
-  function! PyIbusSet(active)
+  function! IBusPySet(active)
     return py3eval('IBusPy.set('.a:active.')')
   endfunction
 else
-  execute 'pyfile '.s:PYPATH
-  function! PyIbusGet()
+python << EOF
+from gi.repository import IBus
+class IBusPy:
+    BUS = IBus.Bus()
+    IC = IBus.InputContext.get_input_context(
+            BUS.current_input_context(),
+            BUS.get_connection())
+    @staticmethod
+    def ic():
+        return IBusPy.IC
+    @staticmethod
+    def get():
+        if IBusPy.ic().is_enabled():
+            return 1
+        else:
+            return 0
+    @staticmethod
+    def set(v):
+        if v:
+            IBusPy.ic().enable()
+        else:
+            IBusPy.ic().disable()
+        return 0
+EOF
+  function! IBusPyGet()
     return pyeval('IBusPy.get()')
   endfunction
-  function! PyIbusSet(active)
+  function! IBusPySet(active)
     return pyeval('IBusPy.set('.a:active.')')
   endfunction
 endif
 
 function! s:init()
-  set imactivatefunc=PyIbusSet
-  set imstatusfunc=PyIbusGet
+  set imactivatefunc=IBusPySet
+  set imstatusfunc=IBusPyGet
 endfunction
 
 function! s:isGuiTerm()
@@ -51,10 +95,7 @@ function! s:isGuiTerm()
 endfunction
 
 if has('gui_running')
-  augroup PyIbus
-    autocmd!
-    autocmd FocusGained * call <SID>init()
-  augroup END
+  call <SID>init()
 elseif s:isGuiTerm()
   call <SID>init()
 endif

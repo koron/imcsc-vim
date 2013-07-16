@@ -1,27 +1,23 @@
-# vim:set sts=4 sw=4 tw=0 et:
-
+# vim:set sts=4 sw=4 tw=0:
 from gi.repository import IBus
-
 class IBusPy:
     BUS = IBus.Bus()
-
+    IC = IBus.InputContext.get_input_context(
+            BUS.current_input_context(),
+            BUS.get_connection())
     @staticmethod
-    def _ic():
-        bus = IBusPy.BUS
-        path = bus.current_input_context()
-        conn = bus.get_connection()
-        return IBus.InputContext.get_input_context(path, conn)
-
+    def ic():
+        return IBus.IC
     @staticmethod
     def get():
-        ic = IBusPy._ic()
-        return 1 if ic.is_enabled() else 0
-
+        if IBusPy.ic().is_enabled():
+            return 1
+        else:
+            return 0
     @staticmethod
     def set(v):
-        ic = IBusPy._ic()
         if v:
-            ic.enable()
+            IBusPy.ic().enable()
         else:
-            ic.disable()
+            IBusPy.ic().disable()
         return 0
