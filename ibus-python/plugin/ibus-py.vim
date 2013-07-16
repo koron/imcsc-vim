@@ -89,13 +89,25 @@ function! s:init()
   set imstatusfunc=IBusPyGet
 endfunction
 
+function! s:initGui()
+  augroup! IBusPy
+  call s:init()
+endfunction
+
 function! s:isGuiTerm()
   " TODO: Check running on GUI term (ex. xfce4-term).
   return 1
 endfunction
 
+call s:init()
+finish
+
+" TODO: this causes problem.
 if has('gui_running')
-  call <SID>init()
+  augroup IBusPy
+    autocmd!
+    autocmd GUIEnter * call <SID>initGui()
+  augroup END
 elseif s:isGuiTerm()
   call <SID>init()
 endif
