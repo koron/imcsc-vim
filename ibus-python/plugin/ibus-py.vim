@@ -51,11 +51,11 @@ function! IBusPySetup()
   call s:pyfile(s:PYPATH)
 
   function! IBusPyGet()
-    return s:pyeval('IBusPy.get()')
+    return s:pyeval('IMEStatus.get()')
   endfunction
 
   function! IBusPySet(active)
-    return s:pyeval('IBusPy.set('.a:active.')')
+    return s:pyeval('IMEStatus.set('.a:active.')')
   endfunction
 
   set imactivatefunc=IBusPySet

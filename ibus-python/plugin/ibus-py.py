@@ -2,7 +2,7 @@
 
 from gi.repository import IBus
 
-class IBusPy:
+class IMEStatus:
 
     BUS = IBus.Bus()
     IC = IBus.InputContext.get_input_context(
@@ -11,11 +11,11 @@ class IBusPy:
 
     @staticmethod
     def ic():
-        return IBusPy.IC
+        return IMEStatus.IC
 
     @staticmethod
     def get():
-        if IBusPy.ic().is_enabled():
+        if IMEStatus.ic().is_enabled():
             return 1
         else:
             return 0
@@ -23,7 +23,7 @@ class IBusPy:
     @staticmethod
     def set(v):
         if v:
-            IBusPy.ic().enable()
+            IMEStatus.ic().enable()
         else:
-            IBusPy.ic().disable()
+            IMEStatus.ic().disable()
         return 0
