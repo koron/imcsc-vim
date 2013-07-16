@@ -20,66 +20,23 @@ if !s:is_enable()
   finish
 end
 
+let s:PYPATH = expand('<sfile>:p:r').'.py'
+
 if has('python3')
-
-python << END
-import ibus
-class PyIbus:
-    BUS = ibus.Bus()
-    @staticmethod
-    def get():
-        ic = ibus.InputContext(PyIbus.BUS, PyIbus.BUS.current_input_contxt())
-        if ic.is_enabled():
-            return 1
-        else:
-            return 0
-    @staticmethod
-    def set(v):
-        ic = ibus.InputContext(PyIbus.BUS, PyIbus.BUS.current_input_contxt())
-        if v:
-            ic.enable()
-        else:
-            ic.disable()
-        return 0
-END
-
+  execute 'py3file '.s:PYPATH
   function! PyIbusGet()
-    return py3eval('PyIbus.get()')
+    return py3eval('IBusPy.get()')
   endfunction
-
   function! PyIbusSet(active)
-    return py3eval('PyIbus.set('.a:active.')')
+    return py3eval('IBusPy.set('.a:active.')')
   endfunction
-
-elseif has('python')
-
-python << END
-import ibus
-class PyIbus:
-    BUS = ibus.Bus()
-    @staticmethod
-    def get():
-        ic = ibus.InputContext(PyIbus.BUS, PyIbus.BUS.current_input_contxt())
-        if ic.is_enabled():
-            return 1
-        else:
-            return 0
-    @staticmethod
-    def set(v):
-        ic = ibus.InputContext(PyIbus.BUS, PyIbus.BUS.current_input_contxt())
-        if v:
-            ic.enable()
-        else:
-            ic.disable()
-        return 0
-END
-
+else
+  execute 'pyfile '.s:PYPATH
   function! PyIbusGet()
-    return pyeval('PyIbus.get()')
+    return pyeval('IBusPy.get()')
   endfunction
-
   function! PyIbusSet(active)
-    return pyeval('PyIbus.set('.a:active.')')
+    return pyeval('IBusPy.set('.a:active.')')
   endfunction
 endif
 
