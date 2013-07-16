@@ -5,12 +5,12 @@
 scriptencoding utf-8
 
 function! s:is_enable()
-  " Check version (and patch)
+  " Check version: 'imaf' and 'imsf' are available or not.
   if !(v:version == 703 && has('patch1248') || v:version >= 704)
     return 0
   end
-  " Check python
-  if !(has('python') || has('python3'))
+  " Check python:
+  if !(has('python3') || has('python'))
     return 0
   end
   return 1
@@ -20,94 +20,53 @@ if !s:is_enable()
   finish
 end
 
-if has('python3')
-python3 << EOF
-from gi.repository import IBus
-class IBusPy:
-    BUS = IBus.Bus()
-    IC = IBus.InputContext.get_input_context(
-            BUS.current_input_context(),
-            BUS.get_connection())
-    @staticmethod
-    def ic():
-        return IBusPy.IC
-    @staticmethod
-    def get():
-        if IBusPy.ic().is_enabled():
-            return 1
-        else:
-            return 0
-    @staticmethod
-    def set(v):
-        if v:
-            IBusPy.ic().enable()
-        else:
-            IBusPy.ic().disable()
-        return 0
-EOF
-  function! IBusPyGet()
-    return py3eval('IBusPy.get()')
-  endfunction
-  function! IBusPySet(active)
-    return py3eval('IBusPy.set('.a:active.')')
-  endfunction
-else
-python << EOF
-from gi.repository import IBus
-class IBusPy:
-    BUS = IBus.Bus()
-    IC = IBus.InputContext.get_input_context(
-            BUS.current_input_context(),
-            BUS.get_connection())
-    @staticmethod
-    def ic():
-        return IBusPy.IC
-    @staticmethod
-    def get():
-        if IBusPy.ic().is_enabled():
-            return 1
-        else:
-            return 0
-    @staticmethod
-    def set(v):
-        if v:
-            IBusPy.ic().enable()
-        else:
-            IBusPy.ic().disable()
-        return 0
-EOF
-  function! IBusPyGet()
-    return pyeval('IBusPy.get()')
-  endfunction
-  function! IBusPySet(active)
-    return pyeval('IBusPy.set('.a:active.')')
-  endfunction
-endif
-
-function! s:init()
-  set imactivatefunc=IBusPySet
-  set imstatusfunc=IBusPyGet
+function! s:pyfile(path)
+  if has('python3')
+    execute 'py3file ' . a:path
+  elseif has('python')
+    execute 'pyfile ' . a:path
+  else
+    throw 'pyfile: python is not supported'
+  end
 endfunction
 
-function! s:initGui()
-  augroup! IBusPy
-  call s:init()
+function! s:pyeval(str)
+  if has('python3')
+    return py3eval(a:str)
+  elseif has('python')
+    return pyeval(a:str)
+  else
+    throw 'pyeval: python is not supported'
+  end
 endfunction
 
-function! s:isGuiTerm()
+function! s:is_gui_term()
   " TODO: Check running on GUI term (ex. xfce4-term).
   return 1
 endfunction
 
-call s:init()
-finish
+let s:PYPATH = expand('<sfile>:p:r').'.py'
 
-" TODO: this causes problem.
+function! IBusPySetup()
+  call s:pyfile(s:PYPATH)
+
+  function! IBusPyGet()
+    return s:pyeval('IBusPy.get()')
+  endfunction
+
+  function! IBusPySet(active)
+    return s:pyeval('IBusPy.set('.a:active.')')
+  endfunction
+
+  set imactivatefunc=IBusPySet
+  set imstatusfunc=IBusPyGet
+endfunction
+
 if has('gui_running')
   augroup IBusPy
     autocmd!
-    autocmd GUIEnter * call <SID>initGui()
+    autocmd GUIEnter * call IBusPySetup()
   augroup END
-elseif s:isGuiTerm()
-  call <SID>init()
+elseif s:is_gui_term()
+  call IBusPySetup()
 endif
