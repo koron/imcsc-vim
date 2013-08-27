@@ -36,5 +36,5 @@ function! UimSet(active)
   call writefile(lines, $UIM_FEP_SETMODE)
 endfunction
 
-set imactivatefunc=UimGet
-set imstatusfunc=UimSet
+set imactivatefunc=UimSet
+set imstatusfunc=UimGet
