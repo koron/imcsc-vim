@@ -45,9 +45,10 @@ function! s:is_gui_term()
   return 1
 endfunction
 
+let s:PYPATH = expand('<sfile>:p:r').'.py'
+
 function! FcitxPySetup()
-  let pypath = expand('<sfile>:p:r').'.py'
-  call s:pyfile(pypath)
+  call s:pyfile(s:PYPATH)
 
   function! FcitxPyGet()
     let flag = s:pyeval('fcitx_is_active()')
@@ -55,12 +56,11 @@ function! FcitxPySetup()
   endfunction
 
   function! FcitxPySet(active)
-    return s:pyeval('fcitx_set_active(' . a:active . ')')
+    call s:pyeval('fcitx_set_active(' . a:active . ')')
   endfunction
 
-  " TODO: enable these after test.
-  "set imactivatefunc=FcitxPySet
-  "set imstatusfunc=FcitxPyGet
+  set imactivatefunc=FcitxPySet
+  set imstatusfunc=FcitxPyGet
 endfunction
 
 if has('gui_running')

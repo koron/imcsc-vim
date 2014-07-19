@@ -64,24 +64,4 @@ def fcitx_set_active(status):
         fcitx_activate()
     else:
         fcitx_inactivate()
-
-
-if __name__ == '__main__':
-    import sys
-
-    def get_mode():
-        if len(sys.argv) < 2:
-            return -1
-        v = int(sys.argv[1])
-        if v != 0:
-            return 1
-        else:
-            return 0
-
-    mode = get_mode()
-    if mode == 1:
-        fcitx_activate()
-    elif mode == 0:
-        fcitx_inactivate()
-    else:
-        print(fcitx_is_active())
+    return 0
