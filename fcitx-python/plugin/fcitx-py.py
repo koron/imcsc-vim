@@ -49,13 +49,21 @@ def fcitx_is_active():
 
 
 # Make fcitx active.
-def fcitx_active():
+def fcitx_activate():
     fcitx_send(FCITX_OPEN)
 
 
 # Make fcitx inactive.
-def fcitx_inactive():
+def fcitx_inactivate():
     fcitx_send(FCITX_CLOSE)
+
+
+# Set fcitx's active status.
+def fcitx_set_active(status):
+    if status:
+        fcitx_activate()
+    else:
+        fcitx_inactivate()
 
 
 if __name__ == '__main__':
@@ -72,8 +80,8 @@ if __name__ == '__main__':
 
     mode = get_mode()
     if mode == 1:
-        fcitx_active()
+        fcitx_activate()
     elif mode == 0:
-        fcitx_inactive()
+        fcitx_inactivate()
     else:
         print(fcitx_is_active())
