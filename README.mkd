@@ -5,6 +5,7 @@ Directory   | Description
 ibus-python | iBus by Python
 uimfep-vim  | uim-fep by pure Vim script
 uim-ctlso   | uim by uim-ctl.so
+fcitx-python| fcitx by Python
 
 # LICENSE
 
