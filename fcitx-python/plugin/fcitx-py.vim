@@ -41,8 +41,8 @@ function! s:pyeval(str)
 endfunction
 
 function! s:is_gui_term()
-  " TODO: Check running on GUI term (ex. xfce4-term).
-  return 1
+  " FIXME: Check running on GUI term (ex. xfce4-term).
+  return exists('$DISPLAY')
 endfunction
 
 let s:PYPATH = expand('<sfile>:p:r').'.py'
